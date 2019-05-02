@@ -1,0 +1,49 @@
+body{
+    font-family: 'Arial';
+    background: lightskyblue;
+    color: #000000;
+    padding: 10px;
+}
+
+.row{
+    width: 100%;
+}
+
+h1{
+    margin-right: 15px;
+    text-align: left;
+    color: blue;
+}
+
+h2{
+    color: blue;
+}
+
+.base-select{
+    width: 300px;
+    height: 40px;
+    border-radius: 4px;
+    background-color: #fff;
+    border: solid 1px #cccccc;
+    text-align: left;
+    padding: 7.5px 15px;
+    color: #ccc;
+    letter-spacing: 0.7px;
+    margin-top: 25px;
+}
+
+input{
+    width: 300px;
+    height: 40px;
+}
+
+.country-name{
+    display: inline-block;
+}
+
+.country-flag{
+    display: inline-block;
+    margin-right: 10px;
+    margin-bottom: 12px;
+}
+

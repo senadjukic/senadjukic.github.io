@@ -1,1 +1,118 @@
-<h1>Hello</h1>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta chartset="utf-8">
+    <title>VueJS</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.js"></script>
+</head>
+<body>
+
+<div id="app" class="container">
+    <div class="row">
+        <div class="col-md-12 col-xs-12">
+            <h1 class="title">{{ base }} Currency Converter</h1>
+
+        </div>
+    </div>
+
+    <div class="row">
+        <section v-if="errored">
+            <p>{{ errors }}</p>
+        </section>
+
+        <section v-else>
+            <div v-if="loading">Loading...</div>
+            <section v-if="validationfail">
+                <p>{{ validationviolation }}</p>
+            </section>
+            <input type="text" v-model="multiplier" @change="validateInput" placeholder="Please enter your amount">
+            <select v-model="base" @change="fetchRates(base)">
+                <option v-for="(rate,currencysymbol) in rates">{{ currencysymbol }}</option>
+            </select>
+
+            <div
+                    v-for="(rate, currencysymbol) in rates"
+                    class="currency"
+            >
+                {{ currencysymbol }} : {{ rate * multiplier | fixeddecimals }}
+            </div>
+        </section>
+    </div>
+</div>
+
+
+<script>
+    new Vue({
+        el: '#app',
+        data() {
+            return {
+                multiplier: 1,
+                base: 'CHF',
+                rates: null,
+                ratesdate: null,
+                loading: true,
+                errored: false,
+                error: '',
+                validationfail: false,
+                validationviolation: [],
+            }
+        },
+        methods: {
+            fetchRates: function (base) {
+                axios
+                    .get('https://api.exchangeratesapi.io/latest?base=' + base)
+                    .then(response => {
+                        this.base = response.data.base;
+                        this.rates = response.data.rates;
+                        this.ratesdate = response.data.date;
+                    })
+                    .catch(error => {
+                        this.errored = true;
+                        this.errors.push('We are sorry, we are not able to retrieve this information at the moment, please try back later');
+                    })
+                    .finally(() => this.loading = false)
+            },
+            sortArrays: function(array) {
+                return _.orderBy(array, '', 'asc');
+            },
+            validateInput: function (e) {
+                this.validationfail = false;
+                this.validationviolation = [];
+
+                if (this.multiplier == '') {
+                    this.multiplier = 1;
+                };
+                if(isNaN(this.multiplier)){
+                    this.validationfail = true;
+                    this.validationviolation.push('Please enter a number.');
+                    this.multiplier = 1;
+                }
+            },
+        },
+        filters: {
+            fixeddecimals(value) {
+                return value.toFixed(4)
+            }
+        },
+        mounted() {
+            this.fetchRates(this.base);
+        }
+    })
+</script>
+
+<!-- jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+<!-- Latest compiled JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+
+</body>
+</html>
+
+
+
+
+
